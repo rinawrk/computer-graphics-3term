@@ -1,45 +1,38 @@
-// ВАРИАНТ через DLL (если линковать glfw3dll.lib / glew32.lib и рядом класть .dll):
-// #define GLFW_DLL
-// #define GLEW_DLL
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
-// ВАРИАНТ через STATIC (используется в этом проекте):
-// - GLFW линковка: glfw3.lib (static)
-// - GLEW подключён как исходник: файл glew.c добавлен в проект
+#include <stdio.h>      // для printf / fprintf
+#include <math.h>       // для sinf(...)
 
-#include <GL/glew.h>	 // Заголовочный файл для GLEW
-#include <GLFW/glfw3.h>	 // Заголовочный файл для GLFW
+#include "Shader.h"     // подключение файла Shader.h
 
-#include <stdio.h>	     // Для функций ввода/вывода fprintf и printf
-
-int main(void)
+int main()
 {
-    // Инициализация библиотеки
+    // 1) Инициализация GLFW
     if (!glfwInit()) {
         fprintf(stderr, "ERROR: could not start GLFW3.\n");
         return 1;
     }
 
-    // Установка версии OpenGL 1.0
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // 2) Современный контекст OpenGL 4.6
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Создание окна и контекста
-    GLFWwindow* window = glfwCreateWindow(512, 512, "Lab 1 - Variant 10", NULL, NULL);
+    // 3) Создание окна и контекста
+    GLFWwindow* window = glfwCreateWindow(512, 512, "Lab 2 - Variant 10", NULL, NULL);
     if (!window) {
         fprintf(stderr, "ERROR: could not open window with GLFW3.\n");
         glfwTerminate();
         return 1;
     }
 
-    // Делаем контекст текущим
+    // Делаем созданный контекст текущим
     glfwMakeContextCurrent(window);
 
-    // Включаем экспериментальный режим GLEW для поддержки современных функций
-    glewExperimental = GL_TRUE;
-
-    // Инициализация GLEW
+    // 4) Инициализация GLEW
+    glewExperimental = GL_TRUE; // режим GLEW для поддержки современных функций
     GLenum ret = glewInit();
     if (GLEW_OK != ret) {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(ret));
@@ -47,15 +40,70 @@ int main(void)
         return 1;
     }
 
-    // Вывод информации о версиях для отладки (дополнительно)
-    const GLubyte* version_str = glGetString(GL_VERSION);
-    const GLubyte* device_str = glGetString(GL_RENDERER);
+    // 5) Данные фигуры
+    // Квадрат = 4 вершины, каждая вершина = (x, y, z)
+    // Кординаты вершин:
+    float vertices[] = {
+        // x,    y,    z
+        -0.5f,  0.5f,  0.0f,  // левая верхняя = 0
+         0.5f,  0.5f,  0.0f,  // правая верхняя = 1
+         0.5f, -0.5f,  0.0f,  // правая нижняя = 2
+        -0.5f, -0.5f,  0.0f   // левая нижняя = 3
+    };
 
-    fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-    printf("This version OpenGL running is %s\n", version_str);
-    printf("This device OpenGL running is %s\n", device_str);
+    // 6) Индексы для координат вершин: 
+    // квадрат = 2 треугольника
+    // (0,1,2) и (2,3,0) — диагональ 0-2
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
 
-    // Основной цикл рендеринга
+    // 7) Создание VAO/VBO/EBO
+    
+    // VAO: "память" о настройке атрибутов вершин
+    // VBO: буфер с вершинами на GPU
+    // EBO: буфер с индексами на GPU
+
+    GLuint VAO = 0, VBO = 0, EBO = 0;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    // Включение VAO: всё, что настроим дальше, запомнится в этом VAO
+    glBindVertexArray(VAO);
+
+    // VBO: загружаем массив вершин в память видеокарты
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // EBO: загружаем индексы треугольников
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Настройка интерпретации данных из буфера (VBO)
+    glVertexAttribPointer(
+        0,                      // индекс атрибута (location = 0)
+        3,                      // каждая вершина состоит из 3 компонентов (x, y, z)
+        GL_FLOAT,               // тип данных - числа
+        GL_FALSE,               // нормализация отключена
+        3 * sizeof(float),      // шаг между вершинами
+        (void*)0                // смещение в буфере 0 - данные начинаются с начала буфера
+    );
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);  // отвязали VBO
+    glBindVertexArray(0);              // отвязали VAO
+
+    // 8) Задание 2: загружаем шейдеры из файлов
+    Shader shader("shaders/basic.vert", "shaders/basic.frag");
+    if (shader.ID == 0) {
+        fprintf(stderr, "ERROR: shader program not created.\n");
+        glfwTerminate();
+        return 1;
+    }
+
+    // 9) Основной цикл рендера
     while (!glfwWindowShouldClose(window)) {
 
         // Установка цвета фона (вариант 10: (0.2,1.0,1.0))
@@ -63,28 +111,36 @@ int main(void)
         // Очистка кадра
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Начало отрисовки фигуры (вариант 10: квадрат)
-        glBegin(GL_QUADS);
+        // Задание 1: зависимость цвета от времени
+        // Делаем пульсацию яркости, k - коэффициент яркости
+        float t = (float)glfwGetTime();
+        float k = 0.8f + 0.2f * sinf(t); // k меняется периодически: примерно 0,6..1,0
 
-        // Установка цвета фигуры (вариант 10: (1.0,0.8,0.5))
-        glColor3f(1.0f, 0.8f, 0.5f);
+        // Базовый цвет квадрата: (1.0, 0.8, 0.5)
+        // Умножаем его на k - становится светлее/темнее
+        float r = 1.0f * k;
+        float g = 0.8f * k;
+        float b = 0.5f * k;
 
-        // Координаты вершин квадрата
-        glVertex2f(-0.5f, 0.5f);     // левая верхняя
-        glVertex2f(0.5f, 0.5f);      // правая верхняя
-        glVertex2f(0.5f, -0.5f);     // правая нижняя
-        glVertex2f(-0.5f, -0.5f);    // левая нижняя
+        // Включаем шейдер и задаём uniform цвет
+        shader.use();
+        shader.setVec4("ourColor", r, g, b, 1.0f);
 
-        // Завершение отрисовки
-        glEnd();
+        // Рисуем квадрат по индексам (2 треугольника = 6 индексов)
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        // Отображение нового кадра
+        // Обмен буферов и обработка событий
         glfwSwapBuffers(window);
-        // Обработка событий (ввод, закрытие окна и т.д.)
         glfwPollEvents();
     }
 
-    // Завершение работы с контекстом
+    // 10) Очистка
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+
+    // 11) Завершение работы с контекстом
     glfwTerminate();
     return 0;
 }
