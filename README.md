@@ -13,10 +13,10 @@
 ### Изображения
 
 **Общий вид**  
-![Общий вид](assets/Lab3_V10_M20C/Images/overall.PNG)
+![Общий вид](assets/blender_model_M20C/Images/overall.PNG)
 
 **Элементы модели**  
-![Элементы модели](assets/Lab3_V10_M20C/Images/parts.PNG)
+![Элементы модели](assets/blender_model_M20C/Images/parts.PNG)
 
 **Вид на соединение**  
-![Вид на соединение](assets/Lab3_V10_M20C/Images/joint.PNG)
+![Вид на соединение](assets/blender_model_M20C/Images/joint.PNG)
