@@ -36,7 +36,7 @@
 
 ![Элементы модели](assets/blender_model_M20C/Images/parts.PNG)
 
-![Элементы модели по цветам](assets/blender_model_M20C/Images/parts_2.PNG)
+![Элементы модели по цветам](assets/blender_model_M20C/Images/parts_1.PNG)
 
 **Вид на соединение**  
 ![Вид на соединение](assets/blender_model_M20C/Images/joint.PNG)
