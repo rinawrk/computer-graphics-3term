@@ -1,5 +1,7 @@
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 #include <stdio.h>
 
+int main(void)
+{
+    printf("Lab 5: start\n");
+    return 0;
+}

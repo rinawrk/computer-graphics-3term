@@ -1,4 +1,6 @@
-// На основе Mesh.h из папки assimp
+// На основе Model.h из папки assimp
+
+// Реализация через Model.cpp
 
 #ifndef MODEL_H
 #define MODEL_H
@@ -22,33 +24,31 @@
 #include <vector>
 
 using namespace std;
-using namespace std;
 
 class Model
 {
 public:
-    
+    // Набор мешей, из которых состоит модель
     vector<Mesh> meshes;
+
+    // Папка, где лежит файл модели
     string directory;
-        
-    Model(string const& path) 
-    {}
-       
-    void Draw()
-    {}
+
+    // Конструктор: сразу загружает модель
+    Model(string const& path);
+
+    // Отрисовка: просто рисуем все меши
+    void Draw();
 
 private:
-    
-    void loadModel(string const& path)
-    {}
-        
-    void processNode(aiNode* node, const aiScene* scene)
-    {}
+    // Загружает сцену Assimp и запускает рекурсивный разбор
+    void loadModel(string const& path);
 
-    Mesh processMesh(aiMesh* mesh, const aiScene* scene)
-    {
-        return Mesh(vertices, indices);
-    }        
+    // Рекурсивно обходит дерево узлов и добавляет меши
+    void processNode(aiNode* node, const aiScene* scene);
+
+    // Переводит aiMesh в наш Mesh (Vertex + indices + VAO/VBO/EBO)
+    Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 };
 
 #endif

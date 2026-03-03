@@ -105,8 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)assimp\build\include;
-$(SolutionDir)assimp\include;$(SolutionDir)glew-2.1.0\include;$(SolutionDir)glfw-3.4.bin.WIN64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\assimp\build\include;$(SolutionDir)assimp\assimp\include;$(SolutionDir)glm;$(SolutionDir)glew-2.1.0\include;$(SolutionDir)glfw-3.4.bin.WIN64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,8 +123,7 @@ $(SolutionDir)assimp\include;$(SolutionDir)glew-2.1.0\include;$(SolutionDir)glfw
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)assimp\build\include;
-$(SolutionDir)assimp\include;$(SolutionDir)glew-2.1.0\include;$(SolutionDir)glfw-3.4.bin.WIN64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\assimp\build\include;$(SolutionDir)assimp\assimp\include;$(SolutionDir)glm;$(SolutionDir)glew-2.1.0\include;$(SolutionDir)glfw-3.4.bin.WIN64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +135,14 @@ $(SolutionDir)assimp\include;$(SolutionDir)glew-2.1.0\include;$(SolutionDir)glfw
   <ItemGroup>
     <ClCompile Include="..\glew-2.1.0\src\glew.c" />
     <ClCompile Include="Lab_5.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Shader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
