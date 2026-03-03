@@ -13,9 +13,96 @@
 static const unsigned int SCR_WIDTH = 1024;
 static const unsigned int SCR_HEIGHT = 768;
 
+// =================== Камера (позиция/направление/вверх) ====================
+
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 6.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// ========================== Мышь: углы yaw/pitch ===========================
+
+float yaw = -90.0f;
+float pitch = 0.0f;
+
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
+
+bool  firstMouse = true;
+float sensitivity = 0.1f;
+
+// ========================= Время кадра (deltaTime) ==========================
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+
 static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+
+// ============================================================================
+// Обработка клавиатуры: WASD перемещает камеру
+// ============================================================================
+
+void processInput(GLFWwindow* window)
+{
+    const float cameraSpeed = 2.5f * deltaTime;
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+
+    glm::vec3 right = glm::normalize(glm::cross(cameraFront, cameraUp));
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= right * cameraSpeed;
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += right * cameraSpeed;
+}
+
+// ============================================================================
+// Callback мыши: обновляет yaw/pitch и пересчитывает cameraFront
+// ============================================================================
+
+void mouse_callback(GLFWwindow* /*window*/, double xposIn, double yposIn)
+{
+    float xpos = (float)xposIn;
+    float ypos = (float)yposIn;
+
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+
+    lastX = xpos;
+    lastY = ypos;
+
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
+
+    if (pitch > 89.0f)  pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
+
+    glm::vec3 front;
+    front.x = cosf(glm::radians(yaw)) * cosf(glm::radians(pitch));
+    front.y = sinf(glm::radians(pitch));
+    front.z = sinf(glm::radians(yaw)) * cosf(glm::radians(pitch));
+
+    cameraFront = glm::normalize(front);
 }
 
 int main(void)
@@ -38,7 +125,13 @@ int main(void)
         return 1;
     }
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // Захватываем курсор мыши внутри окна (иначе он будет улетать)
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // Подписываемся на движение мыши
+    glfwSetCursorPosCallback(window, mouse_callback);
+
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // чтобы при изменении размера окна корректно обновлялся viewport
 
     // 2) GLEW
     glewExperimental = GL_TRUE;
@@ -62,17 +155,26 @@ int main(void)
     // 5) Загружаем модель (куб-заглушка в assets)
     Model model("../assets/cube_zaglushka/Cube.obj");
 
-    // 6) Статичная камера (пока без управления)
+    /* Статичная камера - была добавлена для первичного теста, используется глобальная
     glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 6.0f);
     glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); */
 
     while (!glfwWindowShouldClose(window))
     {
+        // Время кадра (для движения с deltaTime)
+        float currentFrame = (float)glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        // Обработка клавиатуры
+        processInput(window);
+
         // Закрытие по Esc
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
 
+        // Фон (цвет - графит)
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -85,9 +187,10 @@ int main(void)
             0.1f, 100.0f
         );
 
-        glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+        // Камера смотрит вперёд по направлению cameraFront (WASD + мышь)
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-        glm::mat4 modelMat = glm::mat4(1.0f); // можно будет двигать/масштабировать модель
+        glm::mat4 modelMat = glm::mat4(1.0f); // матрица модели, плюс можно будет двигать/масштабировать модель
 
         // Передаём uniforms
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
