@@ -63,7 +63,7 @@ int main(void)
     Model model("../assets/cube_zaglushka/Cube.obj");
 
     // 6) Статичная камера (пока без управления)
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 6.0f);
     glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -73,7 +73,7 @@ int main(void)
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
 
-        glClearColor(0.14f, 0.14f, 0.14f, 1.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.use();
@@ -95,7 +95,8 @@ int main(void)
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
 
         // Цвет плоской заливки (lightColor)
-        glUniform3f(glGetUniformLocation(shader.ID, "lightColor"), 0.85f, 0.85f, 0.85f);
+        glm::vec3 lightColor(0.85f, 0.85f, 0.85f);
+        glUniform3f(glGetUniformLocation(shader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 
         // Рисуем модель
         model.Draw();
