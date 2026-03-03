@@ -25,4 +25,4 @@
 
 ### Результат работы
 
-![Скриншот окна - импорт модели через Assimp](Images/Lab5_assimp.png)
+![Скриншот окна - импорт модели через Assimp](assets/blender_model_M20C/Images/Lab5_assimp.png)
