@@ -41,6 +41,8 @@ void Model::loadModel(string const& path)
 
     // Рекурсивно разбираем дерево узлов
     processNode(scene->mRootNode, scene);
+
+    cout << "Loaded meshes: " << meshes.size() << endl; // проверка, что модель разбилась на меши
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -63,6 +65,12 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* /*scene*/)
 {
     vector<Vertex> vertices;
     vector<unsigned int> indices;
+
+    // Материал меша (пока не используется, но индекс сохраняем как часть структуры Assimp)
+    unsigned int materialIndex = mesh->mMaterialIndex;
+
+    // Если позже нужно будет добавлять текстуры/материалы:
+    (void)materialIndex; // заглушка, чтобы не было warning "unused variable"
 
     // Вершины
     // По методичке минимум: Position + Normal
