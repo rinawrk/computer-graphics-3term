@@ -105,6 +105,10 @@ void mouse_callback(GLFWwindow* /*window*/, double xposIn, double yposIn)
     cameraFront = glm::normalize(front);
 }
 
+// ============================================================================
+// main(): создание окна, настройка OpenGL, загрузка модели и рендер-цикл
+// ============================================================================
+
 int main(void)
 {
     // 1) GLFW
