@@ -3,12 +3,12 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
-#include <GL\GL.h>
-#include "GLFW/glfw3.h"
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -20,6 +20,8 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+
+using namespace std;
 using namespace std;
 
 class Model
