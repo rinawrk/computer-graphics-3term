@@ -153,11 +153,12 @@ int main(void)
     }
 
     // 5) Загружаем модель 
+    
     // тестовая модель: куб-заглушка в папке assets
-    Model model("../assets/cube_zaglushka/Cube.obj");
+    // Model model("../assets/cube_zaglushka/Cube.obj");
 
-    // своя модель из Blender - на будущее (будет использована после экспорта в .obj)
-    // Model model("../assets/blender_model_M20C/Lab3_V10_M20C.obj");
+    // своя модель из Blender
+    Model model("../assets/blender_model_M20C/Lab3_V10_M20C.obj");
 
     /* Статичная камера - была добавлена для первичного теста, используется глобальная
     glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 6.0f);
