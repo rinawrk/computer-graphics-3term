@@ -15,9 +15,14 @@ uniform mat3 normalMatrix;
 void main()
 {
     vec4 worldPos = model * vec4(aPos, 1.0);
-    FragPos = worldPos.xyz;
 
-    Normal = normalMatrix * aNormal;
+// Позиция вершины в мировых координатах (нужна для расчёта света во фрагментном шейдере)
+FragPos = worldPos.xyz;
 
-    gl_Position = projection * view * worldPos;
+// Нормаль после преобразования (normalMatrix нужна при масштабировании/поворотах модели)
+Normal = normalMatrix * aNormal;
+
+// Итоговая позиция в пространстве после проекции (clip space)
+gl_Position = projection * view * worldPos;
+
 }
