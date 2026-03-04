@@ -15,14 +15,14 @@ static const unsigned int SCR_HEIGHT = 768;
 
 // =================== Камера (позиция/направление/вверх) ====================
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 6.0f);
+glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, 5.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 // ========================== Мышь: углы yaw/pitch ===========================
 
 float yaw = -90.0f;
-float pitch = 0.0f;
+float pitch = -10.0f;  // стартовый наклон камеры чуть вниз и перерасчет cameraFront в main()
 
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -139,6 +139,16 @@ int main(void)
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     // Подписываемся на движение мыши
     glfwSetCursorPosCallback(window, mouse_callback);
+
+    // Пересчёт cameraFront по стартовым yaw/pitch 
+    // (так как изменила float pitch в глобальных переменных) 
+    {
+        glm::vec3 front;
+        front.x = cosf(glm::radians(yaw)) * cosf(glm::radians(pitch));
+        front.y = sinf(glm::radians(pitch));
+        front.z = sinf(glm::radians(yaw)) * cosf(glm::radians(pitch));
+        cameraFront = glm::normalize(front);
+    }
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // чтобы при изменении размера окна корректно обновлялся viewport
 
