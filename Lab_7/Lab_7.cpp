@@ -65,9 +65,9 @@ const float armsMinOffsetZ = -0.38881f; // 1.2 - 1.58881
 const float armsMaxOffsetZ = 0.11119f;  // 1.7 - 1.58881
 
 // Скорости движения (в единицах в секунду / градусах в секунду)
-const float carriageSpeed = 0.8f;
-const float manipulatorRotateSpeed = 25.0f;
-const float armsSpeed = 0.25f;
+const float carriageSpeed = 1.2f;
+const float manipulatorRotateSpeed = 35.0f;
+const float armsSpeed = 0.5f;
 
 // ============================================================================
 // Обработка клавиатуры: WASD перемещает камеру
@@ -221,7 +221,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Lab 6 - Lighting", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Lab 7 - Moving", NULL, NULL);
     if (!window) {
         fprintf(stderr, "ERROR: could not open window\n");
         glfwTerminate();
