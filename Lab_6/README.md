@@ -22,4 +22,4 @@
 
 ### Результат работы
 
-![Lab 6 — освещение модели Фонга](assets/blender_model_M20C/Images/Lab6_lighting.png)
+![Lab 6 — освещение модели Фонга](../assets/blender_model_M20C/Images/Lab6_lighting.png)
