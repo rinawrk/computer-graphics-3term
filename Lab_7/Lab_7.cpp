@@ -96,7 +96,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += right * cameraSpeed;
 
-    // ============================ Движение робота ============================
+    // ============================ Движение модели ============================
 
     // 1) Каретка: стрелки Left / Right
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
@@ -330,14 +330,47 @@ int main(void)
         shader.setMat4("projection", glm::value_ptr(projection));
         shader.setMat4("view", glm::value_ptr(view));
 
-        // Пока на этом этапе все части рисуем без движения,
-        // просто отдельными мешами с единичными model-матрицами
-        glm::mat4 beamMat = glm::mat4(1.0f);
-        glm::mat4 carriageMat = glm::mat4(1.0f);
-        glm::mat4 manipulatorBoxMat = glm::mat4(1.0f);
-        glm::mat4 armsMat = glm::mat4(1.0f);
+        // Координаты шарнира после перевода осей из Blender в систему OpenGL/OBJ:
+        // X' = X, Y' = Z, Z' = -Y
+        glm::vec3 hingePoint(0.0f, 1.41064f, 0.370484f);
 
-        // Рисуем каждую часть модели отдельно
+        // --------------------- Матрицы движения частей -----------------------
+
+        // Балка неподвижна
+        glm::mat4 beamMat = glm::mat4(1.0f);
+
+        // 1) Каретка: линейное перемещение вдоль балки
+        glm::mat4 carriageMat = glm::translate(
+            glm::mat4(1.0f),
+            glm::vec3(carriageOffsetX, 0.0f, 0.0f)
+        );
+
+        // 2) Бокс манипулятора:
+        // вращаение вокруг точки шарнира
+        glm::mat4 manipulatorRotateMat =
+            glm::translate(glm::mat4(1.0f), hingePoint) *
+            glm::rotate(
+                glm::mat4(1.0f),
+                glm::radians(manipulatorAngleDeg),
+                glm::vec3(1.0f, 0.0f, 0.0f)
+            ) *
+            glm::translate(glm::mat4(1.0f), -hingePoint);
+
+        // Бокс наследует движение каретки и свой поворот в шарнире
+        glm::mat4 manipulatorBoxMat = carriageMat * manipulatorRotateMat;
+
+        // 3) Руки:
+        // сначала наследуют движение каретки и поворот бокса и потом двигаются вверх-вниз
+        // В Blender руки двигаются по локальной оси Z,после экспорта эта ось соответствует Y
+        glm::mat4 armsLocalMoveMat = glm::translate(
+            glm::mat4(1.0f),
+            glm::vec3(0.0f, armsOffsetZ, 0.0f)
+        );
+
+        glm::mat4 armsMat = carriageMat * manipulatorRotateMat * armsLocalMoveMat;
+
+        // ------------------------- Отрисовка частей --------------------------
+
         DrawMeshPart(model, beamIndex, beamMat, shader);
         DrawMeshPart(model, carriageIndex, carriageMat, shader);
         DrawMeshPart(model, manipulatorBoxIndex, manipulatorBoxMat, shader);
