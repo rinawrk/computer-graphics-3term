@@ -4,10 +4,11 @@
 #include <cstddef>
 
 // Конструктор меша: сохраняем данные и настраиваем OpenGL буферы
-Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices)
+Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, const string& name)
 {
     this->vertices = vertices;
     this->indices = indices;
+    this->name = name;
 
     // Создаём VAO/VBO/EBO и настраиваем атрибуты вершин
     setupMesh();
@@ -40,7 +41,6 @@ void Mesh::setupMesh()
         GL_STATIC_DRAW);
 
     // Атрибут 0: Position (vec3)
-    // layout(location = 0) -> Position
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0,
         3, GL_FLOAT, GL_FALSE,
@@ -48,7 +48,6 @@ void Mesh::setupMesh()
         (void*)0);
 
     // Атрибут 1: Normal (vec3)
-    // layout(location = 1) -> Normal
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1,
         3, GL_FLOAT, GL_FALSE,
@@ -60,7 +59,7 @@ void Mesh::setupMesh()
 
 // Отрисовка меша:
 // шейдер активируется снаружи (в main), здесь Mesh выполняет draw-вызов
-void Mesh::Draw()
+void Mesh::Draw() const
 {
     glBindVertexArray(VAO);
 
@@ -72,3 +71,4 @@ void Mesh::Draw()
 
     glBindVertexArray(0);
 }
+

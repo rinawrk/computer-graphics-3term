@@ -1,7 +1,3 @@
-// На основе Mesh.h из папки assimp
-
-// Делаем через Mesh.cpp, так как это правильнее по C++: заголовок содержит объявления, cpp - реализацию
-
 #ifndef MESH_H
 #define MESH_H
 
@@ -10,6 +6,7 @@
 #include <gtc/matrix_transform.hpp> 
 
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -24,18 +21,22 @@ class Mesh {
 public:
     vector <Vertex> vertices;
     vector <unsigned int> indices;
+
+    // Имя меша из файла модели
+    string name;
+
     unsigned int VAO;
 
-    // Конструктор (реализация в Mesh.cpp)
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices);
+    // Конструктор: сохраняем вершины, индексы и имя меша
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, const string& name);
 
-    // Отрисовка меша (реализация в Mesh.cpp)
-    void Draw();
+    // Отрисовка одного меша
+    void Draw() const;
 
 private:
     unsigned int VBO, EBO;
 
-    // Настройка VAO/VBO/EBO (реализация в Mesh.cpp)
+    // Настройка VAO/VBO/EBO
     void setupMesh();
 };
 

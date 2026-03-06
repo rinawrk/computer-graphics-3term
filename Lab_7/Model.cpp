@@ -3,19 +3,64 @@
 // Для обработки пути
 #include <cstring>
 
-Model::Model(string const& path)
+Model::Model(const string& path)
 {
     loadModel(path);
 }
 
-void Model::Draw()
+void Model::Draw() const
 {
     // Рендерим все меши модели
     for (unsigned int i = 0; i < meshes.size(); i++)
+    {
         meshes[i].Draw();
+    }
 }
 
-void Model::loadModel(string const& path)
+void Model::DrawMesh(unsigned int meshIndex) const
+{
+    // Защита от выхода за границы массива
+    if (meshIndex >= meshes.size())
+    {
+        cout << "ERROR: mesh index out of range: " << meshIndex << endl;
+        return;
+    }
+
+    // Рисуем только один нужный меш
+    meshes[meshIndex].Draw();
+}
+
+void Model::PrintMeshInfo() const
+{
+    cout << "\n=== Mesh list ===" << endl;
+
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        cout << i << " -> " << meshes[i].name << endl;
+    }
+
+    cout << "=================\n" << endl;
+}
+
+int Model::FindMeshIndexByName(const string& meshName) const
+{
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        if (meshes[i].name == meshName)
+        {
+            return (int)i;
+        }
+    }
+
+    return -1;
+}
+
+unsigned int Model::GetMeshCount() const
+{
+    return (unsigned int)meshes.size();
+}
+
+void Model::loadModel(const string& path)
 {
     Assimp::Importer importer;
 
@@ -36,13 +81,13 @@ void Model::loadModel(string const& path)
         return;
     }
 
-    // Сохраняем директорию файла (для текстур в будущих лабах)
+    // Сохраняем директорию файла
     directory = path.substr(0, path.find_last_of("/\\"));
 
     // Рекурсивно разбираем дерево узлов
     processNode(scene->mRootNode, scene);
 
-    cout << "Loaded meshes: " << meshes.size() << endl; // проверка, что модель разбилась на меши
+    cout << "Loaded meshes: " << meshes.size() << endl;
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -50,8 +95,10 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     // 1) Все меши, которые перечислены в этом узле
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        unsigned int meshIndex = node->mMeshes[i];
+        aiMesh* mesh = scene->mMeshes[meshIndex];
+
+        meshes.push_back(processMesh(mesh, scene, meshIndex));
     }
 
     // 2) Рекурсивно обрабатываем всех детей узла
@@ -61,17 +108,25 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* /*scene*/)
+Mesh Model::processMesh(aiMesh* mesh, const aiScene* /*scene*/, unsigned int meshIndex)
 {
     vector<Vertex> vertices;
     vector<unsigned int> indices;
-    
-    // Индекс материала меша (понадобится для текстур/материалов)
+
+    // Индекс материала меша
     unsigned int materialIndex = mesh->mMaterialIndex;
     (void)materialIndex;
 
+    // Берём имя меша из модели
+    string meshName = mesh->mName.C_Str();
+
+    // Если имя пустое, задаём запасное имя
+    if (meshName.empty())
+    {
+        meshName = "Mesh_" + to_string(meshIndex);
+    }
+
     // Вершины
-    // По методичке минимум: Position + Normal
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Vertex vertex;
@@ -97,13 +152,16 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* /*scene*/)
     }
 
     // Индексы
-    // их берём из faces (каждый face после Triangulate = треугольник)
+    // Каждый face после Triangulate = треугольник
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
+
         for (unsigned int j = 0; j < face.mNumIndices; j++)
+        {
             indices.push_back(face.mIndices[j]);
+        }
     }
 
-    return Mesh(vertices, indices);
+    return Mesh(vertices, indices, meshName);
 }
