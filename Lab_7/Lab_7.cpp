@@ -59,7 +59,7 @@ const float manipulatorMinAngleDeg = 0.0f;
 const float manipulatorMaxAngleDeg = 22.0f;
 
 // 3-я степень: руки двигаются вдоль оси Z
-// Храним не абсолютную координату, а смещение от стартового положения
+// Не абсолютная координата, а смещение от стартового положения
 float armsOffsetZ = 0.0f;
 const float armsMinOffsetZ = -0.38881f; // 1.2 - 1.58881
 const float armsMaxOffsetZ = 0.11119f;  // 1.7 - 1.58881
@@ -80,6 +80,8 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
+    // ============================= Камера: WASD =============================
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         cameraPos += cameraSpeed * cameraFront;
 
@@ -93,6 +95,61 @@ void processInput(GLFWwindow* window)
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += right * cameraSpeed;
+
+    // ============================ Движение робота ============================
+
+    // 1) Каретка: стрелки Left / Right
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        carriageOffsetX -= carriageSpeed * deltaTime;
+
+        if (carriageOffsetX < carriageMinOffsetX)
+            carriageOffsetX = carriageMinOffsetX;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        carriageOffsetX += carriageSpeed * deltaTime;
+
+        if (carriageOffsetX > carriageMaxOffsetX)
+            carriageOffsetX = carriageMaxOffsetX;
+    }
+
+    // 2) Бокс манипулятора: клавиши R / T
+    // R - наклон, T - возврат назад
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+    {
+        manipulatorAngleDeg += manipulatorRotateSpeed * deltaTime;
+
+        if (manipulatorAngleDeg > manipulatorMaxAngleDeg)
+            manipulatorAngleDeg = manipulatorMaxAngleDeg;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+    {
+        manipulatorAngleDeg -= manipulatorRotateSpeed * deltaTime;
+
+        if (manipulatorAngleDeg < manipulatorMinAngleDeg)
+            manipulatorAngleDeg = manipulatorMinAngleDeg;
+    }
+
+    // 3) Руки: стрелки Up / Down
+    // Up - поднять, Down - опустить 
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        armsOffsetZ += armsSpeed * deltaTime;
+
+        if (armsOffsetZ > armsMaxOffsetZ)
+            armsOffsetZ = armsMaxOffsetZ;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        armsOffsetZ -= armsSpeed * deltaTime;
+
+        if (armsOffsetZ < armsMinOffsetZ)
+            armsOffsetZ = armsMinOffsetZ;
+    }
 }
 
 // ============================================================================
