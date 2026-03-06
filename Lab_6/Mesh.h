@@ -17,7 +17,7 @@ struct Vertex {
     // position - координаты вершины в модели
     glm::vec3 Position;
     // normal — нормаль вершины
-    glm::vec3 Normal;      
+    glm::vec3 Normal;
 };
 
 class Mesh {
@@ -40,5 +40,3 @@ private:
 };
 
 #endif
-
-
