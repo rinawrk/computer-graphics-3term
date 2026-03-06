@@ -46,6 +46,29 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // Позиция точки света в мировых координатах (для расчёта Фонга)
 glm::vec3 lightPos = glm::vec3(2.0f, 2.0f, 2.0f);
 
+// ======================== Параметры движения модели =========================
+
+// 1-я степень: каретка едет вдоль балки по X
+float carriageOffsetX = 0.0f;
+const float carriageMinOffsetX = -1.3f;
+const float carriageMaxOffsetX = 1.3f;
+
+// 2-я степень: наклон бокса манипулятора
+float manipulatorAngleDeg = 0.0f;
+const float manipulatorMinAngleDeg = 0.0f;
+const float manipulatorMaxAngleDeg = 22.0f;
+
+// 3-я степень: руки двигаются вдоль оси Z
+// Храним не абсолютную координату, а смещение от стартового положения
+float armsOffsetZ = 0.0f;
+const float armsMinOffsetZ = -0.38881f; // 1.2 - 1.58881
+const float armsMaxOffsetZ = 0.11119f;  // 1.7 - 1.58881
+
+// Скорости движения (в единицах в секунду / градусах в секунду)
+const float carriageSpeed = 0.8f;
+const float manipulatorRotateSpeed = 25.0f;
+const float armsSpeed = 0.25f;
+
 // ============================================================================
 // Обработка клавиатуры: WASD перемещает камеру
 // ============================================================================
