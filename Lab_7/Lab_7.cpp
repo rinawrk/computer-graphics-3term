@@ -110,6 +110,19 @@ void mouse_callback(GLFWwindow* /*window*/, double xposIn, double yposIn)
     cameraFront = glm::normalize(front);
 }
 
+// Отрисовка одного меша с его собственной model-матрицей
+void DrawMeshPart(const Model& model, int meshIndex, const glm::mat4& modelMat, const Shader& shader)
+{
+    // Матрица нормалей нужна для корректного освещения после поворотов/масштабирования
+    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMat)));
+
+    // Передаём в шейдер матрицу модели и матрицу нормалей
+    shader.setMat4("model", glm::value_ptr(modelMat));
+    shader.setMat3("normalMatrix", glm::value_ptr(normalMatrix));
+
+    // Рисуем только один нужный меш
+    model.DrawMesh((unsigned int)meshIndex);
+}
 
 // ============================================================================
 // main(): создание окна, настройка OpenGL, загрузка модели и рендер-цикл
@@ -183,6 +196,20 @@ int main(void)
     // Проверка: вывести индексы и имена мешей
     model.PrintMeshInfo();
 
+    // Ищем индексы мешей по их именам из экспортированной модели
+    int beamIndex = model.FindMeshIndexByName("Beam_Cube.002");
+    int carriageIndex = model.FindMeshIndexByName("Carriage_Cube.007");
+    int manipulatorBoxIndex = model.FindMeshIndexByName("ManipulatorBox_Cylinder.015");
+    int armsIndex = model.FindMeshIndexByName("Arms_Cylinder.001");
+
+    // Проверка: все ли меши найдены
+    if (beamIndex == -1 || carriageIndex == -1 || manipulatorBoxIndex == -1 || armsIndex == -1)
+    {
+        fprintf(stderr, "ERROR: not all mesh names were found in the model\n");
+        glfwTerminate();
+        return 1;
+    }
+
     while (!glfwWindowShouldClose(window))
     {
         // Время кадра (для движения с deltaTime)
@@ -200,16 +227,9 @@ int main(void)
         // Активируем шейдер с освещением
         shader.use();
 
-        // Mat4 отправляем напрямую через glUniformMatrix4fv, а остальные uniform — через методы Shader
-
-        // Матрицы сцены: projection (перспектива), view (камера), model (положение/поворот объекта)
+        // Матрицы сцены: projection (перспектива) и view (камера)
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        glm::mat4 modelMat = glm::mat4(1.0f);
-
-        // Матрица нормалей: нужна, чтобы корректно преобразовывать нормали при трансформациях modelMat (scale/rotate)
-        glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMat)));
-        shader.setMat3("normalMatrix", glm::value_ptr(normalMatrix));
 
         // Параметры источника света
         shader.setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
@@ -226,13 +246,22 @@ int main(void)
         // Позиция камеры: нужна для расчёта бликов (specular)
         shader.setVec3("viewPos", cameraPos.x, cameraPos.y, cameraPos.z);
 
-        // Передаём uniforms
-        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelMat));
+        // Эти матрицы одинаковые для всей сцены, поэтому задаём их один раз
+        shader.setMat4("projection", glm::value_ptr(projection));
+        shader.setMat4("view", glm::value_ptr(view));
 
-        // Рисуем модель
-        model.Draw();
+        // Пока на этом этапе все части рисуем без движения,
+        // просто отдельными мешами с единичными model-матрицами
+        glm::mat4 beamMat = glm::mat4(1.0f);
+        glm::mat4 carriageMat = glm::mat4(1.0f);
+        glm::mat4 manipulatorBoxMat = glm::mat4(1.0f);
+        glm::mat4 armsMat = glm::mat4(1.0f);
+
+        // Рисуем каждую часть модели отдельно
+        DrawMeshPart(model, beamIndex, beamMat, shader);
+        DrawMeshPart(model, carriageIndex, carriageMat, shader);
+        DrawMeshPart(model, manipulatorBoxIndex, manipulatorBoxMat, shader);
+        DrawMeshPart(model, armsIndex, armsMat, shader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
