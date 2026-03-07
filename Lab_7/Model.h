@@ -1,12 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -14,8 +8,6 @@
 #include "Mesh.h"
 
 #include <string>
-#include <fstream>
-#include <sstream>
 #include <iostream>
 #include <vector>
 
@@ -36,7 +28,7 @@ public:
     // Отрисовка всей модели целиком
     void Draw() const;
 
-    // Отрисовка одного меша по индексу
+    // Отрисовка одного меша по индексу для раздельного преобразования частей модели
     void DrawMesh(unsigned int meshIndex) const;
 
     // Вывести в консоль индексы и имена мешей

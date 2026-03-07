@@ -37,7 +37,7 @@ void Shader::checkProgram(GLuint program)
     int ok = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &ok);
     if (!ok) {
-        // Если нет — читаем лог ошибок
+        // Если нет - читаем лог ошибок
         char log[1024];
         glGetProgramInfoLog(program, 1024, nullptr, log);
         std::cerr << "ERROR: program link failed:\n" << log << "\n";
@@ -120,7 +120,7 @@ void Shader::setMat3(const char* name, const float* value) const
     glUniformMatrix3fv(loc, 1, GL_FALSE, value);
 }
 
-// Передача uniform vec4
+// Передача uniform mat4
 void Shader::setMat4(const char* name, const float* value) const
 {
     GLint loc = glGetUniformLocation(ID, name);

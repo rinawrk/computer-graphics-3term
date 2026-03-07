@@ -6,14 +6,14 @@
 #include <gtc/matrix_transform.hpp> 
 
 #include <vector>
-#include <string>
 
 using namespace std;
 
-struct Vertex {
+struct Vertex 
+{
     // position - координаты вершины в модели
     glm::vec3 Position;
-    // normal — нормаль вершины
+    // normal - нормаль вершины
     glm::vec3 Normal;      
 };
 
@@ -41,5 +41,3 @@ private:
 };
 
 #endif
-
-

@@ -1,8 +1,5 @@
 #include "Model.h"
 
-// Для обработки пути
-#include <cstring>
-
 Model::Model(const string& path)
 {
     loadModel(path);
@@ -30,6 +27,7 @@ void Model::DrawMesh(unsigned int meshIndex) const
     meshes[meshIndex].Draw();
 }
 
+// Вывод информации о мешах
 void Model::PrintMeshInfo() const
 {
     cout << "\n=== Mesh list ===" << endl;
@@ -38,8 +36,6 @@ void Model::PrintMeshInfo() const
     {
         cout << i << " -> " << meshes[i].name << endl;
     }
-
-    cout << "=================\n" << endl;
 }
 
 int Model::FindMeshIndexByName(const string& meshName) const
@@ -113,7 +109,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* /*scene*/, unsigned int mes
     vector<Vertex> vertices;
     vector<unsigned int> indices;
 
-    // Индекс материала меша
+    // Индекс материала меша (если подключать .mtl)
     unsigned int materialIndex = mesh->mMaterialIndex;
     (void)materialIndex;
 

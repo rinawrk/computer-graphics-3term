@@ -18,10 +18,10 @@ public:
     // fragmentPath — путь к .frag
     Shader(const char* vertexPath, const char* fragmentPath);
 
-    // Включить (сделать активной) эту программу шейдеров
+    // Сделать активной программу шейдеров
     void use() const;
 
-    // Передача uniform одной строкой
+    // Передача uniform-переменных
     void setVec4(const char* name, float x, float y, float z, float w) const;
     void setVec3(const char* name, float x, float y, float z) const;
     void setFloat(const char* name, float v) const;
@@ -36,4 +36,3 @@ private:
     static void checkShader(GLuint shader);
     static void checkProgram(GLuint program);
 };
-

@@ -71,4 +71,3 @@ void Mesh::Draw() const
 
     glBindVertexArray(0);
 }
-

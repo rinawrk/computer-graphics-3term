@@ -58,7 +58,7 @@ float manipulatorAngleDeg = 0.0f;
 const float manipulatorMinAngleDeg = 0.0f;
 const float manipulatorMaxAngleDeg = 22.0f;
 
-// 3-я степень: руки двигаются вдоль оси Z
+// 3-я степень: руки перемещаются вдоль направляющей
 // Не абсолютная координата, а смещение от стартового положения
 float armsOffsetZ = 0.0f;
 const float armsMinOffsetZ = -0.38881f; // 1.2 - 1.58881
@@ -70,7 +70,7 @@ const float manipulatorRotateSpeed = 35.0f;
 const float armsSpeed = 0.5f;
 
 // ============================================================================
-// Обработка клавиатуры: WASD перемещает камеру
+// Обработка клавиатуры: управление камерой и моделью
 // ============================================================================
 
 void processInput(GLFWwindow* window)
@@ -346,7 +346,7 @@ int main(void)
         );
 
         // 2) Бокс манипулятора:
-        // вращаение вокруг точки шарнира
+        // вращение вокруг точки шарнира
         glm::mat4 manipulatorRotateMat =
             glm::translate(glm::mat4(1.0f), hingePoint) *
             glm::rotate(
@@ -361,7 +361,7 @@ int main(void)
 
         // 3) Руки:
         // сначала наследуют движение каретки и поворот бокса и потом двигаются вверх-вниз
-        // В Blender руки двигаются по локальной оси Z,после экспорта эта ось соответствует Y
+        // в Blender руки двигаются по локальной оси Z,после экспорта эта ось соответствует Y
         glm::mat4 armsLocalMoveMat = glm::translate(
             glm::mat4(1.0f),
             glm::vec3(0.0f, armsOffsetZ, 0.0f)
