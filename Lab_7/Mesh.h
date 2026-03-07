@@ -6,6 +6,7 @@
 #include <gtc/matrix_transform.hpp> 
 
 #include <vector>
+#include <string>
 
 using namespace std;
 
