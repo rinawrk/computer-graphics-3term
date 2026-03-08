@@ -1,3 +1,5 @@
+// Лабораторная работа №7: создание движения через аффинные преобразования
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -380,6 +382,7 @@ int main(void)
         glfwPollEvents();
     }
 
+    // Завершение работы GLFW
     glfwTerminate();
     return 0;
 }
