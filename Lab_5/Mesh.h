@@ -1,6 +1,5 @@
 // На основе Mesh.h из папки assimp
-
-// Делаем через Mesh.cpp, так как это правильнее по C++: заголовок содержит объявления, cpp - реализацию
+// Реализация в Mesh.cpp
 
 #ifndef MESH_H
 #define MESH_H
@@ -14,9 +13,9 @@
 using namespace std;
 
 struct Vertex {
-    // position
+    // position - координаты вершины в модели
     glm::vec3 Position;
-    // normal
+    // normal - нормаль вершины
     glm::vec3 Normal;      
 };
 
@@ -26,19 +25,17 @@ public:
     vector <unsigned int> indices;
     unsigned int VAO;
 
-    // Конструктор (реализация в Mesh.cpp)
+    // Конструктор: сохраняем вершины и индексы меша
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices);
 
-    // Отрисовка меша (реализация в Mesh.cpp)
+    // Отрисовка меша
     void Draw();
 
 private:
     unsigned int VBO, EBO;
 
-    // Настройка VAO/VBO/EBO (реализация в Mesh.cpp)
+    // Настройка VAO/VBO/EBO
     void setupMesh();
 };
 
 #endif
-
-

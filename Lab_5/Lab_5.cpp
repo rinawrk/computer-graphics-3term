@@ -1,3 +1,5 @@
+// Лабораторная работа №5: Подключение и работа с библиотекой ASSIMP. Настройка импорта модели.
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -217,6 +219,7 @@ int main(void)
         glfwPollEvents();
     }
 
+    // Завершение работы GLFW
     glfwTerminate();
     return 0;
 }
