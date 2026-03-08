@@ -28,4 +28,3 @@ private:
     static void checkShader(GLuint shader);
     static void checkProgram(GLuint program);
 };
-
