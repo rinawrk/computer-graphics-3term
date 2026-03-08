@@ -2,11 +2,7 @@
 #include <string>
 #include <GL/glew.h>
 
-// Класс Shader — маленькая "библиотека" для задания 2:
-// - читает .vert/.frag из файлов
-// - компилирует и линкует шейдерную программу
-// - позволяет задавать uniform в одну строку
-
+// Класс Shader для загрузки, компиляции и использования шейдерной программы
 class Shader
 {
 public:
@@ -32,4 +28,3 @@ private:
     static void checkShader(GLuint shader);
     static void checkProgram(GLuint program);
 };
-

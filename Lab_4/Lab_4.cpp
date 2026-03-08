@@ -141,30 +141,30 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // 3) Создание окна
+    // 3) Создание окна GLFW
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Lab 4 - Cube", NULL, NULL);
     if (!window) {
         fprintf(stderr, "ERROR: could not open window\n");
         glfwTerminate();
         return 1;
     }
-
+    // Делаем OpenGL-контекст этого окна текущим
     glfwMakeContextCurrent(window);
 
-    // Захватываем курсор мыши внутри окна (иначе он будет улетать)
+    // 4) Фиксируем курсор мыши внутри окна для удобного управления камерой
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     // Подписываемся на движение мыши
     glfwSetCursorPosCallback(window, mouse_callback);
 
     // 5) Инициализация GLEW
-    glewExperimental = GL_TRUE;
+    glewExperimental = GL_TRUE; // Разрешаем GLEW использовать современные функции OpenGL
     if (glewInit() != GLEW_OK) {
         fprintf(stderr, "ERROR: could not start GLEW\n");
         glfwTerminate();
         return 1;
     }
 
-    // 6) Depth test для корректного отображения 3D
+    // 6) Включаем depth test для корректного отображения ближних и дальних граней
     glEnable(GL_DEPTH_TEST);
 
     // Режим отрисовки:
@@ -281,6 +281,7 @@ int main(void)
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
+    // 12) Завершение работы GLFW
     glfwTerminate();
     return 0;
 }
