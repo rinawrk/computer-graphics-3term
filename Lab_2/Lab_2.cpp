@@ -23,7 +23,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // 3) Создание окна и OpenGL контекста
+    // 3) Создание окна GLFW
     GLFWwindow* window = glfwCreateWindow(512, 512, "Lab 2 - Variant 10", NULL, NULL);
     if (!window) {
         fprintf(stderr, "ERROR: could not open window with GLFW3.\n");
@@ -31,11 +31,11 @@ int main(void)
         return 1;
     }
 
-    // Делаем созданный контекст текущим
+    // Делаем OpenGL-контекст этого окна текущим
     glfwMakeContextCurrent(window);
 
     // 4) Инициализация GLEW
-    glewExperimental = GL_TRUE; // режим GLEW для поддержки современных функций
+    glewExperimental = GL_TRUE; // Разрешаем GLEW использовать современные функции OpenGL
     GLenum ret = glewInit();
     if (GLEW_OK != ret) {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(ret));
@@ -99,7 +99,7 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, 0);  // отвязали VBO
     glBindVertexArray(0);              // отвязали VAO
 
-    // 8) Задание 2: загружаем шейдеры из файлов
+    // 8) Загрузка шейдеров из файлов
     Shader shader("shaders/basic.vert", "shaders/basic.frag");
     if (shader.ID == 0) {
         fprintf(stderr, "ERROR: shader program not created.\n");
@@ -115,9 +115,9 @@ int main(void)
         // Очистка кадра
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Задание 1: зависимость цвета от времени
-        // Делаем пульсацию яркости, k - коэффициент яркости
-        // Используем синусоиду от времени: значение меняется от 0.6 до 1.0
+        // Плавное изменение яркости цвета во времени:
+        // делаем пульсацию яркости, k - коэффициент яркости
+        // используем синусоиду от времени: значение меняется от 0.6 до 1.0
         float t = (float)glfwGetTime();
         float k = 0.8f + 0.2f * sinf(t);
 
@@ -131,7 +131,7 @@ int main(void)
         shader.use();
         shader.setVec4("ourColor", r, g, b, 1.0f);
 
-        // Привязываем VAO (в нём сохранены все настройки буферов)
+        // Привязываем VAO с настройкой вершинных атрибутов
         glBindVertexArray(VAO);
         // Рисуем элементы: 6 индексов (2 треугольника)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -148,7 +148,7 @@ int main(void)
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 
-    // 11) Завершение работы с контекстом
+    // 11) Завершение работы GLFW
     glfwTerminate();
     return 0;
 }

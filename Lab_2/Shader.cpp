@@ -85,7 +85,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 
 void Shader::use() const
 {
-    // Сделать эту программу активной (все последующие draw будут с ней)
+    // Сделать эту программу активной
     glUseProgram(ID);
 }
 
