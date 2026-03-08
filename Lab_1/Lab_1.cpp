@@ -32,23 +32,22 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    // Не используются для OpenGL 1.0:
+    // Для OpenGL 1.0 дополнительные настройки Core Profile не нужны:
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_FALSE);
     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // Создание окна и OpenGL контекста
+    
+    // Создание окна GLFW
     GLFWwindow* window = glfwCreateWindow(512, 512, "Lab 1 - Variant 10", NULL, NULL);
     if (!window) {
         fprintf(stderr, "ERROR: could not open window with GLFW3.\n");
         glfwTerminate();
         return 1;
     }
-
-    // Делаем созданный контекст текущим
+    // Делаем OpenGL-контекст этого окна текущим
     glfwMakeContextCurrent(window);
 
     // Инициализация GLEW
-    glewExperimental = GL_TRUE; // Разрешаем экспериментальный набор функций
+    glewExperimental = GL_TRUE; // Разрешаем GLEW использовать современные функции OpenGL
     GLenum ret = glewInit();
     if (GLEW_OK != ret) {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(ret));
@@ -93,7 +92,7 @@ int main(void)
         glfwPollEvents();
     }
 
-    // Завершение работы с контекстом
+    // Завершение работы GLFW
     glfwTerminate();
     return 0;
 }
