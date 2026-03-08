@@ -1,7 +1,3 @@
-// На основе Model.h из папки assimp
-
-// Реализация через Model.cpp
-
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -37,7 +33,7 @@ public:
     // Конструктор: сразу загружает модель
     Model(string const& path);
 
-    // Отрисовка: просто рисуем все меши
+    // Отрисовка всей модели: рисуем все меши по очереди
     void Draw();
 
 private:

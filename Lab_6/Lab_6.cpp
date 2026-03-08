@@ -1,3 +1,5 @@
+// Лабораторная работа №6: настройка освещения с использованием шейдерных программ
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -234,6 +236,7 @@ int main(void)
         glfwPollEvents();
     }
 
+    // Завершение работы GLFW
     glfwTerminate();
     return 0;
 }
