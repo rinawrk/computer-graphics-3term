@@ -328,7 +328,8 @@ int main(void)
         // Позиция камеры: нужна для расчёта бликов (specular)
         shader.setVec3("viewPos", cameraPos.x, cameraPos.y, cameraPos.z);
 
-        // Эти матрицы одинаковые для всей сцены, поэтому задаём их один раз
+       // Эти матрицы одинаковы для всех частей модели в текущем кадре,
+       // поэтому передаём их в шейдер один раз перед отрисовкой всех мешей:
         shader.setMat4("projection", glm::value_ptr(projection));
         shader.setMat4("view", glm::value_ptr(view));
 
